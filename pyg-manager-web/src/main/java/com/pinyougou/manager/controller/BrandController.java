@@ -22,7 +22,6 @@ public class BrandController {
 	
 	@RequestMapping("/findAll")
 	public List<TbBrand> findAll(){
-		System.out.println("--------------------------");
 		return brandService.findAll();		
 	}
 	
