@@ -19,19 +19,41 @@
     <!-- 分页组件结束 -->
 	<script>
 		var app = angular.module('pyg',['pagination']);
-		app.controller('brandController',function($scope,$http){
+
+		app.service('brandService',function($http){
+		    this.findAll=function(){
+		        return $http.get('../brand/findAll.do');
+            }
+           this.findPage=function(page,size){
+		        return $http.get('../brand/findPage.do?page='+page+'&size='+size);
+           }
+           this.findOne=function(id){
+		        return $http.get('../brand/findOne.do?id='+id);
+           }
+           this.dele=function (selectIds) {
+               return $http.get('../brand/delete.do?ids='+selectIds)
+           }
+           this.search=function(page,size,searchEntity){
+		        return  $http.post("../brand/search.do?page="+page+"&size="+size,searchEntity);
+           }
+           this.add=function (entity) {
+               return $http.post('../brand/add.do',entity);
+           }
+           this.update=function(entity){
+		        return $http.post('../brand/update.do',entity);
+           }
+        })
+
+		app.controller('brandController',function($scope,brandService){
 		    $scope.findAll = function(){
-		        $http.get('../brand/findAll.do').success(
-					function(response){
-					    $scope.list=response;
-					}
+                brandService.fieldAccess().success(
+                    function(response){
+                        $scope.list=response;
+                    }
 				)
 			}
-
-
-
             $scope.findPage = function(page,size){
-                $http.get('../brand/findPage.do?page='+page+'&size='+size).success(
+                brandService.findPage(page,size).success(
                     function(response){
                         $scope.list=response.rows;
                         $scope.paginationConf.totalItems=response.total;
@@ -55,7 +77,7 @@
 
 		    $scope.save=function(){
 		        if($scope.entity.id !=null){
-                    $http.post('../brand/update.do',$scope.entity).success(
+                    brandService.update($scope.entity).success(
                         function(response){
                             if(response.success){
                                 $scope.reloadList();
@@ -65,7 +87,7 @@
                         }
                     )
 				}else{
-                    $http.post('../brand/add.do',$scope.entity).success(
+                    brandService.add($scope.entity).success(
                         function(response){
                             if(response.success){
                                 $scope.reloadList();
@@ -79,7 +101,7 @@
             }
 
             $scope.findOne=function(id){
-		        $http.get('../brand/findOne.do?id='+id).success(
+		        brandService.findOne(id).success(
 		            function(response){
 		                $scope.entity=response;
 					}
@@ -97,8 +119,7 @@
 				}
 			}
 			$scope.dele=function(){
-			    alert('aaa');
-				$http.get('../brand/delete.do?ids='+$scope.selectIds).success(
+                brandService.dele($scope.selectIds).success(
 				    function(response){
 				        if(response.success){
 				            $scope.reloadList();
@@ -109,7 +130,7 @@
 
             $scope.searchEntity={};
 			$scope.search=function(page,size){
-			    $http.post("../brand/search.do?page="+page+"&size="+size,$scope.searchEntity).success(
+                brandService.search(page,size,$scope.searchEntity).success(
 			        function(response){
 			            $scope.paginationConf.totalItems=response.total;
 			            $scope.list=response.rows;

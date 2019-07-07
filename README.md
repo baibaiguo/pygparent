@@ -13,3 +13,6 @@ pygparent
 - js里加上paginationConf的配置
 - 页面中加上pagination插件
 - js里改写 findPage事件
+## pyg第三天
+之前 第二天放到master完成了
+### 完成初步service的提取
