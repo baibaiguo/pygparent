@@ -40,7 +40,7 @@
             }
 
             $scope.reloadList = function(){
-                $scope.findPage($scope.paginationConf.currentPage,$scope.paginationConf.itemsPerPage);
+                $scope.search($scope.paginationConf.currentPage,$scope.paginationConf.itemsPerPage);
             }
 
             $scope.paginationConf = {
@@ -106,6 +106,16 @@
 					}
 				)
             }
+
+            $scope.searchEntity={};
+			$scope.search=function(page,size){
+			    $http.post("../brand/search.do?page="+page+"&size="+size,$scope.searchEntity).success(
+			        function(response){
+			            $scope.paginationConf.totalItems=response.total;
+			            $scope.list=response.rows;
+                    }
+                )
+            }
 		})
 	</script>
 
@@ -134,7 +144,8 @@
                             </div>
                             <div class="box-tools pull-right">
                                 <div class="has-feedback">
-
+                                    品牌名称：<input ng-model="searchEntity.name">品牌首字母: <input ng-model="searchEntity.firstChar">
+                                    <button class="btn btn-default" ng-click="reloadList()">查询</button>
                                 </div>
                             </div>
                             <!--工具栏/-->
